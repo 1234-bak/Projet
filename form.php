@@ -12,7 +12,10 @@
             background-color: #f4f4f4;
             margin: 20px;
         }
-
+        h1{
+            text-align: center;
+            font-weight: bold;
+        }
         form {
             max-width: 600px;
             margin: 0 auto;
@@ -72,8 +75,11 @@
     </style>
 </head>
 <body>
-    
-    <form action="" method="post">
+    <?php
+        include('config/enregistrer.php');
+    ?>
+    <h1>Ajouter une Personne</h1>
+    <form action="" method="post" enctype="multipart/form-data">
         <label for="nom">Nom :</label>
         <input type="text" id="nom" name="nom">
 
@@ -87,7 +93,7 @@
         <input type="text" id="couleur" name="couleur">
 
         <label for="nationalite">Nationalité :</label>
-        <select id="nationalite">
+        <select id="nationalite" name = "nationalite">
             <option value="AFG">Afghane (Afghanistan)</option>
             <option value="ALB">Albanaise (Albanie)</option>
             <option value="DZA">Algérienne (Algérie)</option>
@@ -319,6 +325,3 @@
 </body>
 </html>
 
-<?php
-    include('config/enregistrer.php');
-?>

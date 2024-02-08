@@ -1,17 +1,18 @@
 <?php
 include('cnx.php');
-function Ajouter($nom,$prenom,$datenaissance,$couleur,$nationalite,$genre,$matiere,$image,$password){
+
+function Ajouter($nom, $prenom, $datenaissance, $couleur, $nationalite, $genre, $matiere, $image, $password)
+{
     if(require("cnx.php")){
-        $sql = " INSERT INTO personne (nom,prenom,datenaissance,couleur,nationalite,genre,matiere,image,password) VALUES ('$nom','$prenom','$datenaissance', $couleur ,'$nationalite','$genre','$matiere','$image','$password')";
+        $sql = "INSERT INTO personne (nom, prenom, datenaissance, couleur, nationalite, genre, matiere, image, password) VALUES ('$nom', '$prenom', '$datenaissance', '$couleur', '$nationalite', '$genre', '$matiere', '$image', '$password')";
         $req = $cnx->prepare($sql);
         $req->execute();
-
     }
-
 }
 
 if (isset($_POST['enregistrer'])) {
-    if (!empty($_POST['nom']) and !empty($_POST['prenom']) and !empty($_POST['datenaissance']) and !empty($_POST['couleur']) and !empty($_POST['nationalite']) and !empty($_POST['genre']) and !empty($_POST['matiere']) and !empty($_POST['image']) and !empty($_POST['password'])) {
+    if (!empty($_POST['nom']) && !empty($_POST['prenom']) && !empty($_POST['datenaissance']) && !empty($_POST['couleur']) && !empty($_POST['nationalite']) && !empty($_POST['genre']) && !empty($_POST['matiere']) && !empty($_FILES['image']['name']) && !empty($_POST['password'])) {
+        
         function filtrer($donnee)
         {
             $donnee = trim($donnee);
@@ -22,29 +23,33 @@ if (isset($_POST['enregistrer'])) {
 
         $nom = filtrer($_POST['nom']);
         $prenom = filtrer($_POST['prenom']);
-        $email = filtrer($_POST['datenaissance']);
+        $datenaissance = filtrer($_POST['datenaissance']);
         $couleur = filtrer($_POST['couleur']);
         $nationalite = filtrer($_POST['nationalite']);
         $genre = filtrer($_POST['genre']);
         $matiere = filtrer($_POST['matiere']);
-        $image = filtrer($_POST['image']);
         $password = filtrer($_POST['password']);
-
-        try {
-            Ajouter($nom,$prenom,$datenaissance,$couleur,$nationalite,$genre,$matiere,$image,$password);
-        } catch (Exception $e) {
-            echo 'erreur :  ' . $e->getMessage();
+        
+        if ($_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $dossier_images = 'C:/wamp64/www/ProjetClass/images/';
+            $nom_fichier = basename($_FILES['image']['name']);
+            $chemin_fichier = $dossier_images . $nom_fichier;
+            
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $chemin_fichier)) {
+                $image = $chemin_fichier;
+                
+                try {
+                    Ajouter($nom, $prenom, $datenaissance, $couleur, $nationalite, $genre, $matiere, $image, $password);
+                    echo "Données insérées avec succès.";
+                } catch (Exception $e) {
+                    echo 'Erreur : ' . $e->getMessage();
+                }
+            } else {
+                echo 'Erreur lors du téléchargement du fichier.';
+            }
+        } else {
+            echo 'Veuillez sélectionner un fichier image.';
         }
-
-
     }
-
-
-
-
-
 }
-
-
-
 ?>
